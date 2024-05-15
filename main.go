@@ -20,11 +20,12 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"net/http"
 	"os"
+	"sync"
 )
 
 func main() {
 	orderService := services.NewOrderService(
-		repositories.NewInMemoryRoomAvailabilityRepository(models.Availability),
+		repositories.NewInMemoryRoomAvailabilityRepository(&sync.Mutex{}, models.Availability),
 		repositories.NewInMemoryOrderRepository(),
 	)
 	orderHandler := handlers.NewOrderHandler(orderService)
@@ -34,7 +35,7 @@ func main() {
 	r.Post("/orders", orderHandler.CreateOrder)
 
 	utils.LogInfo("Server listening on localhost:8080")
-	err := http.ListenAndServe(":8080", r)
+	err := http.ListenAndServe(":8081", r)
 
 	if errors.Is(err, http.ErrServerClosed) {
 		utils.LogInfo("Server closed")
