@@ -12,6 +12,12 @@ type RoomAvailability struct {
 	Quota   int       `json:"quota"`
 }
 
+type DecreaseQuotaDto struct {
+	HotelID string    `json:"hotel_id"`
+	RoomID  string    `json:"room_id"`
+	Date    time.Time `json:"date"`
+}
+
 var Availability = []RoomAvailability{
 	{"reddison", "lux", utils.Date(2024, 1, 1), 1},
 	{"reddison", "lux", utils.Date(2024, 1, 2), 1},
