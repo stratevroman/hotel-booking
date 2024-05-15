@@ -26,6 +26,7 @@ func (os *OrderService) CreateOrder(order models.Order) error {
 		return err
 	}
 
+	params := make([]models.DecreaseQuotaDto, 0)
 	for _, day := range daysToBook {
 		availability, err := os.availabilityRepo.GetAvailability(day, order.HotelID, order.RoomID)
 		if err != nil {
@@ -35,12 +36,12 @@ func (os *OrderService) CreateOrder(order models.Order) error {
 		if availability == nil || availability.Quota <= 0 {
 			return ErrNotAvailableRoom
 		}
+
+		params = append(params, models.DecreaseQuotaDto{HotelID: order.HotelID, RoomID: order.RoomID, Date: day})
 	}
 
-	for _, day := range daysToBook {
-		if err := os.availabilityRepo.DecreaseQuotaByDate(day, order.HotelID, order.RoomID); err != nil {
-			return err
-		}
+	if err := os.availabilityRepo.DecreaseQuota(params); err != nil {
+		return err
 	}
 
 	err = os.orderRepo.CreateOrder(order)
