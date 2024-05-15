@@ -1,3 +1,5 @@
+# hotel-booking
+App for booking hotel. Writing on golang and using chi router
 # Application design
 
 В коде представлен прототип сервиса бронирования номеров в отелях,
